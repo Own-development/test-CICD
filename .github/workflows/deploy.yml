@@ -28,5 +28,6 @@ jobs:
           pwd
           echo 'Listing contents of /var/www/html/test:'
           ls -la /var/www/html/test
-          cd /var/www/html/test && git pull origin main"
+          echo 'Attempting to git pull with sudo...'
+          sudo -u root cd /var/www/html/test && sudo -u root git pull origin main"
         
