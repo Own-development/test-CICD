@@ -18,8 +18,8 @@ jobs:
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-   - name: SSH to server and pull latest changes
-     run: |
+    - name: SSH to server and pull latest changes
+      run: |
         # Automatically accept the server's fingerprint
         ssh-keyscan -H 192.168.44.128 >> ~/.ssh/known_hosts
         # SSH with verbose output and a longer timeout for debugging
