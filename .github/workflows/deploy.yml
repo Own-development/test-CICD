@@ -21,7 +21,7 @@ jobs:
     - name: SSH to server and pull latest changes
       run: |
         # SSH with verbose output and a longer timeout for debugging
-        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=60 -v automation@192.168.44.128 << 'EOF'
+        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=60 -v automation@192.168.44.128 
           cd /var/www/html/test
           git pull origin main
-        EOF
+        
