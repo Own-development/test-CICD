@@ -23,13 +23,20 @@ jobs:
     # Step 3: Deploy modified files to the /var/www/html/test directory using Git
     - name: Deploy to Ubuntu Server
       run: |
+        echo "Starting SSH connection..."
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-          # Navigate to the folder where you want to place the files (adjust this as per your setup)
-          cd /var/www/html/test  # Use the 'test' directory instead of the root html folder
+          echo "Connected to server."
+          # Check if repository exists
+          if [ ! -d "/var/www/html/test/.git" ]; then
+            echo "Cloning repository..."
+            cd /var/www/html && git clone https://github.com/Own-development/test-CICD.git test
+          else
+            echo "Pulling latest changes..."
+            cd /var/www/html/test && git pull origin main
+          fi
           
-          # Pull the latest changes from the GitHub repository (only modified files)
-          git pull origin main  # Pull the latest code from the 'main' branch
-          
-          # Optionally restart Apache (if your web server is Apache)
-          systemctl restart apache2
+          # Restart Nginx instead of Apache
+          echo "Restarting Nginx..."
+          sudo systemctl restart nginx
+          echo "Deployment completed."
         EOF
