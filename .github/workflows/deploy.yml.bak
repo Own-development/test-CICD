@@ -1,4 +1,4 @@
-name: Deploy to Ubuntu Server test.com
+name: Deploy to Server
 
 on:
   push:
@@ -8,36 +8,19 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
+    
     steps:
-    # Step 1: Checkout the code
     - name: Checkout code
-      uses: actions/checkout@v3
-
-    # Step 2: Set up SSH
+      uses: actions/checkout@v2
+    
     - name: Set up SSH key
       uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-
-    # Step 3: Deploy to server
-    - name: Deploy to Ubuntu Server
+    
+    - name: SSH to server and pull latest changes
       run: |
-        echo "Starting SSH connection..."
-        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
-          echo "Connected to server."
-          # Check if directory exists and has git
-          if [ ! -d "/var/www/html/test/.git" ]; then
-            echo "Cloning repository..."
-            mkdir -p /var/www/html/test
-            cd /var/www/html/test
-            git clone git@github.com:Own-development/test-CICD.git .
-          else
-            echo "Pulling latest changes..."
-            cd /var/www/html/test && git fetch origin main && git reset --hard origin/main
-          fi
-<<<<<<< HEAD
+        ssh -o StrictHostKeyChecking=no user@192.168.44.128 << 'EOF'
+          cd /var/www/html/test
+          git pull origin main
         EOF
-=======
-        EOF
->>>>>>> b34f74a2ce282e11c3a594d13fa78a14bb629047
