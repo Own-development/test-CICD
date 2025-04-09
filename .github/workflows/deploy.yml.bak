@@ -1,27 +1,18 @@
-name: Deploy to Server
-
-on:
-  push:
-    branches:
-      - main
-
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout code
-      uses: actions/checkout@v2
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-    - name: Set up SSH key
-      uses: webfactory/ssh-agent@v0.5.3
-      with:
-        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      - name: Set up SSH key
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+        env:
+          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    - name: SSH to server and pull latest changes
-      run: |
-        # SSH with verbose output and a longer timeout for debugging
-        ssh -o StrictHostKeyChecking=no -o ConnectTimeout=60 -v automation@192.168.44.128 
-          cd /var/www/html/test
-          git pull origin main
-        
+      - name: Test SSH connection
+        run: |
+          ssh -o StrictHostKeyChecking=no user@192.168.44.128 "echo 'SSH connection successful!'"
