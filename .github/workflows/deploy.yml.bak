@@ -36,4 +36,8 @@ jobs:
             echo "Pulling latest changes..."
             cd /var/www/html/test && git fetch origin main && git reset --hard origin/main
           fi
+<<<<<<< HEAD
         EOF
+=======
+        EOF
+>>>>>>> b34f74a2ce282e11c3a594d13fa78a14bb629047
