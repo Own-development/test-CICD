@@ -3,40 +3,37 @@ name: Deploy to Ubuntu Server test.com
 on:
   push:
     branches:
-      - main  # Triggers on pushes to the 'main' branch
+      - main
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Using GitHub's hosted Ubuntu runner
+    runs-on: ubuntu-latest
 
     steps:
     # Step 1: Checkout the code
     - name: Checkout code
-      uses: actions/checkout@v3  # Checks out your code to the GitHub runner
+      uses: actions/checkout@v3
 
-    # Step 2: Set up SSH using your private key
+    # Step 2: Set up SSH
     - name: Set up SSH key
-      uses: webfactory/ssh-agent@v0.5.3  # SSH Agent setup to use private key
+      uses: webfactory/ssh-agent@v0.5.3
       with:
         ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
 
-    # Step 3: Deploy modified files to the /var/www/html/test directory using Git
+    # Step 3: Deploy to server
     - name: Deploy to Ubuntu Server
       run: |
         echo "Starting SSH connection..."
         ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
           echo "Connected to server."
-          # Check if repository exists
+          # Check if directory exists and has git
           if [ ! -d "/var/www/html/test/.git" ]; then
             echo "Cloning repository..."
-            cd /var/www/html && git clone https://github.com/Own-development/test-CICD.git test
+            mkdir -p /var/www/html/test
+            cd /var/www/html/test
+            git clone git@github.com:Own-development/test-CICD.git .
           else
             echo "Pulling latest changes..."
-            cd /var/www/html/test && git pull origin main
+            cd /var/www/html/test && git fetch origin main && git reset --hard origin/main
           fi
-          
-          # Restart Nginx instead of Apache
-          echo "Restarting Nginx..."
-          sudo systemctl restart nginx
-          echo "Deployment completed."
         EOF
