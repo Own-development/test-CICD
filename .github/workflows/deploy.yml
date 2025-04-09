@@ -1,0 +1,35 @@
+name: Deploy to Ubuntu Server test.com
+
+on:
+  push:
+    branches:
+      - main  # Triggers on pushes to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Using GitHub's hosted Ubuntu runner
+
+    steps:
+    # Step 1: Checkout the code
+    - name: Checkout code
+      uses: actions/checkout@v3  # Checks out your code to the GitHub runner
+
+    # Step 2: Set up SSH using your private key
+    - name: Set up SSH key
+      uses: webfactory/ssh-agent@v0.5.3  # SSH Agent setup to use private key
+      with:
+        ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+    # Step 3: Deploy modified files to the /var/www/html/test directory using Git
+    - name: Deploy to Ubuntu Server
+      run: |
+        ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USERNAME }}@${{ secrets.SSH_HOST }} << 'EOF'
+          # Navigate to the folder where you want to place the files (adjust this as per your setup)
+          cd /var/www/html/test  # Use the 'test' directory instead of the root html folder
+          
+          # Pull the latest changes from the GitHub repository (only modified files)
+          git pull origin main  # Pull the latest code from the 'main' branch
+          
+          # Optionally restart Apache (if your web server is Apache)
+          systemctl restart apache2
+        EOF
