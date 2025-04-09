@@ -33,10 +33,6 @@ jobs:
           else
             echo "Pulling latest changes..."
             cd /var/www/html/test && git pull origin main
-          fi
-          
-          # Restart Nginx instead of Apache
-          echo "Restarting Nginx..."
-          sudo systemctl restart nginx
-          echo "Deployment completed."
+          fi          
+      
         EOF
