@@ -24,4 +24,3 @@ jobs:
         ssh -o StrictHostKeyChecking=no -o ConnectTimeout=60 -v automation@192.168.44.128 
           cd /var/www/html/test
           git pull origin main
-        
