@@ -24,9 +24,17 @@ jobs:
         echo "Adding the server's fingerprint to known_hosts"
         ssh-keyscan -H 192.168.44.128 >> ~/.ssh/known_hosts
     
+        # Check the current status of known_hosts and permissions
+        echo "Displaying known_hosts file content:"
+        cat ~/.ssh/known_hosts
+    
         # Run SSH command with additional debug output
         echo "Connecting to the server and attempting to pull latest changes"
         ssh -o StrictHostKeyChecking=no -o ConnectTimeout=60 -v automation@192.168.44.128 \
           "echo 'Checking current directory:' && pwd && \
            echo 'Listing contents of /var/www/html/test:' && ls -la /var/www/html/test && \
            echo 'Attempting to git pull with sudo...' && sudo bash -c 'cd /var/www/html/test && git pull origin main'"
+    
+      env:
+        SSH_AUTH_SOCK: /tmp/ssh-AQzedayCfucI/agent.1855
+        SSH_AGENT_PID: 1856
